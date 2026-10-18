@@ -1,6 +1,6 @@
 # Fall Line
 
-Built for DubHacks 2026. For project description, see [DEVPOST](https://devpost.com/software/fall-line?ref_content=my-projects-tab&ref_feature=my_projects).
+Built for DubHacks 2026. For project description, examples, and gallery, see [DEVPOST](https://devpost.com/software/fall-line?ref_content=my-projects-tab&ref_feature=my_projects).
 
 ## Requirements
 
