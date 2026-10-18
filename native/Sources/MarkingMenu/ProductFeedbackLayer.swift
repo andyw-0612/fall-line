@@ -42,9 +42,11 @@ struct ProductFeedbackLayer: View {
             model.focusCanvas?()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-            model.escape()
+            model.suspendPalmInput()
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { _ in model.escape() }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in model.syncTapSensor() }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { _ in model.suspendPalmInput() }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in model.syncTapSensor() }
         .onDisappear { model.escape(); model.inputAvailable = false }
         .task(id: model.history.last?.id) {
             let text: String

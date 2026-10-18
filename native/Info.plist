@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>Marking Menu</string>
-	<key>CFBundleName</key>
-	<string>Marking Menu</string>
-	<key>CFBundleExecutable</key>
-	<string>MarkingMenu</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.moritzvt.markingmenu</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>14.0</string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.developer-tools</string>
-	<key>NSHighResolutionCapable</key>
-	<true/>
-</dict>
-</plist>
+<plist version="1.0"><dict>
+<key>CFBundleDevelopmentRegion</key><string>en</string>
+<key>CFBundleDisplayName</key><string>Marking Menu</string>
+<key>CFBundleName</key><string>Marking Menu</string>
+<key>CFBundleExecutable</key><string>MarkingMenu</string>
+<key>CFBundleIdentifier</key><string>com.moritzvt.markingmenu</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleShortVersionString</key><string>1.0</string>
+<key>CFBundleVersion</key><string>1</string>
+<key>LSMinimumSystemVersion</key><string>14.0</string>
+<key>LSApplicationCategoryType</key><string>public.app-category.developer-tools</string>
+<key>NSHighResolutionCapable</key><true/>
+<key>NSCameraUsageDescription</key><string>Track your index finger using Apple Desk View to control the marking menu. Camera video stays on this Mac.</string>
+<key>NSCameraUseContinuityCameraDeviceType</key><true/>
+</dict></plist>

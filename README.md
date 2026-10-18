@@ -8,8 +8,10 @@
 
 ## Run
 
+This is the `experimental` branch. Camera input requires Apple Silicon.
+
 ```sh
-git clone https://github.com/andyw-0612/fall-line.git
+git clone --branch experimental https://github.com/andyw-0612/fall-line.git
 cd fall-line
 ./native/run.sh
 ```
@@ -25,7 +27,7 @@ Open **Settings** or **Taste & settings**:
 
 ## Controls
 
-- **Input → Drawing input** selects Mouse or Trackpad.
+- **Input → Drawing input** selects Mouse, Trackpad or Finger.
 - Mouse: click, hold, draw through the menu, then release.
 - Trackpad: keep the pointer over the product, place two fingers, draw, then lift.
 - Pause while drawing to reveal the menu.

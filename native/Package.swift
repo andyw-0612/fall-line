@@ -6,8 +6,9 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [.executable(name: "MarkingMenu", targets: ["MarkingMenu"])],
     targets: [
+        .target(name: "CMediaPipe", cxxSettings: [.headerSearchPath("vendor")]),
         .target(name: "MarkingCore"),
-        .executableTarget(name: "MarkingMenu", dependencies: ["MarkingCore"]),
+        .executableTarget(name: "MarkingMenu", dependencies: ["MarkingCore", "CMediaPipe"]),
         .testTarget(name: "MarkingCoreTests", dependencies: ["MarkingCore"], resources: [.copy("Fixtures")]),
         .testTarget(name: "ProductFeedbackTests", dependencies: ["MarkingMenu", "MarkingCore"])
     ]

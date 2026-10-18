@@ -86,7 +86,7 @@ struct ProductView: View {
                 HStack { Text(error).lineLimit(2).frame(maxWidth: 440); Button("Retry", action: session.retry); Button("Use local", action: session.useLocal) }
             }
             if session.exhausted { Text("You’ve reached the end of the matching catalogue.") }
-            Text("Hold to give feedback · ← previous · → next · Choose mouse or trackpad in Input menu")
+            Text("Hold to give feedback · ← previous · → next · Palm rest controls in Input menu")
                 .font(.system(size: 12))
                 .foregroundStyle(.black.opacity(0.45))
                 .padding(.horizontal, 24)
@@ -118,7 +118,7 @@ struct ProductView: View {
             }
         }
         .onDisappear {
-            journey.cancel(); feedbackModel.inputAvailable = false
+            journey.cancel(); feedbackModel.camera.stop(); feedbackModel.inputAvailable = false
             feedbackModel.onNextProduct = nil; feedbackModel.onPreviousProduct = nil
         }
         .onChange(of: journey.currentID) { feedbackModel.escape() }

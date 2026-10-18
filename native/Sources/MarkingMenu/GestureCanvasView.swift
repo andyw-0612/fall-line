@@ -99,12 +99,13 @@ private struct NavigationMonitorToken: @unchecked Sendable {
     }
     override func mouseMoved(with event: NSEvent) {
         guard inputEnabled else { return }
-        model.move(point(event), at: event.timestamp * 1000, down: false, input: .mouse)
+        if model.inputMode != .finger { model.move(point(event), at: event.timestamp * 1000, down: false, input: .mouse) }
     }
     override func keyDown(with event: NSEvent) {
         guard inputEnabled else { return }
         switch event.keyCode {
         case 53: model.escape(); touchStroke.reset(); touchIdentities = []
+        case 49: if !event.isARepeat { model.setSpace(true) }
         case 123:
             if style == .product { if !event.isARepeat { model.onPreviousProduct?() } }
             else { model.choose(.left) }
@@ -117,6 +118,7 @@ private struct NavigationMonitorToken: @unchecked Sendable {
         default: super.keyDown(with: event)
         }
     }
+    override func keyUp(with event: NSEvent) { if event.keyCode == 49 { model.setSpace(false) } else { super.keyUp(with: event) } }
     // Scroll events (including momentum) never drive the marking engine.
     override func scrollWheel(with event: NSEvent) { if model.inputMode != .trackpad { super.scrollWheel(with: event) } }
     override func touchesBegan(with event: NSEvent) { updateTouches(event) }
@@ -228,6 +230,9 @@ private struct NavigationMonitorToken: @unchecked Sendable {
                 NSColor.white.setStroke(); cross.stroke()
             }
         }
-
+        if let point = model.fingerPoint, model.inputMode == .finger {
+            let dot = NSBezierPath(ovalIn: NSRect(x: point.x - 4, y: point.y - 4, width: 8, height: 8))
+            ((model.clutch.down || model.palm.state == .drawing) ? NSColor.black : .white).setFill(); NSColor.black.setStroke(); dot.fill(); dot.stroke()
+        }
     }
 }

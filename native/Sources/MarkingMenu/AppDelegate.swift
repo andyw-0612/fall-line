@@ -7,7 +7,7 @@ import SwiftUI
     func applicationDidResignActive(_ notification: Notification) { AppModel.shared.cancel() }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        AppModel.shared.cancel()
-        return .terminateNow
+        Task { await AppModel.shared.camera.shutdown(); sender.reply(toApplicationShouldTerminate: true) }
+        return .terminateLater
     }
 }

@@ -113,7 +113,57 @@ struct CoreTests {
         _ = pad.update(count: 0, centroid: nil, origin: .zero)
         XCTAssertEqual(pad.update(count: 2, centroid: Point(0.6,0.6), origin: .zero), [.begin(.zero)])
     }
-
+    @Test func testOneEuroFilterDampsJitterWithoutLargeFlickLag() {
+        var filter = OneEuroFilter(); _ = filter.filter(200, at: 0)
+        for i in 1...90 { XCTAssertLessThan(abs(filter.filter(200 + (i.isMultiple(of: 2) ? -1 : 1), at: Double(i) * 16) - 200), 0.3) }
+        filter.reset(); _ = filter.filter(0, at: 0)
+        var value = 0.0
+        for i in 1...8 { value = filter.filter(Double(i) * 25, at: Double(i) * 16) }
+        XCTAssertLessThan(200 - value, 20)
+        XCTAssertEqual(filter.filter(800, at: 1000),800)
+    }
+    @Test func testDwellStartUsesActualMotionTimestamp() {
+        let clutch = HandClutch(); let pointing = HandPose(indexExtended: true, pointing: true, pinched: false)
+        for time in [0.0,100,200] { _ = clutch.update(Point(200,200), pose: pointing, at: time, final: false) }
+        let actions = clutch.update(Point(208,200), pose: pointing, at: 300, final: false)
+        XCTAssertTrue(actions.contains(.begin(Point(200,200),200)))
+        XCTAssertTrue(clutch.down)
+    }
+    @Test func testCurlCommitsAtPreviousDrawingPoint() {
+        let clutch = HandClutch(); let relaxed = HandPose(indexExtended: false, pointing: false, pinched: false)
+        let pointing = HandPose(indexExtended: true, pointing: true, pinched: false)
+        _ = clutch.update(Point(200,200), pose: relaxed, at: 0, final: false)
+        _ = clutch.update(Point(200,200), pose: pointing, at: 10, final: false)
+        _ = clutch.update(Point(230,200), pose: pointing, at: 20, final: true)
+        XCTAssertEqual(clutch.update(Point(100,500), pose: relaxed, at: 30, final: true), [.finish(Point(230,200),30)])
+    }
+    @Test func testLeafDwellCooldownAndButtonFreeUndoMotion() {
+        let clutch = HandClutch(); let pointing = HandPose(indexExtended: true, pointing: true, pinched: false)
+        _ = clutch.update(.zero, pose: HandPose(indexExtended: false, pointing: false, pinched: false), at: 0, final: false)
+        _ = clutch.update(.zero, pose: pointing, at: 10, final: false)
+        var actions: [HandClutch.Action] = []
+        for time in stride(from: 20.0, through: 340, by: 40) { actions += clutch.update(.zero, pose: pointing, at: time, final: true) }
+        XCTAssertTrue(actions.contains(.finish(.zero,340))); clutch.didFinish(committed: true, at: 340)
+        XCTAssertEqual(clutch.update(Point(30,0), pose: pointing, at: 360, final: false), [.move(Point(30,0),360,false)])
+        XCTAssertFalse(clutch.down)
+    }
+    @Test func testClutchUsesSpaceOrPinchAndTrackingLossCancels() {
+        let clutch = HandClutch(); clutch.mode = .clutch
+        let pointing = HandPose(indexExtended: true, pointing: true, pinched: false)
+        _ = clutch.update(.zero, pose: pointing, at: 0, final: false)
+        XCTAssertEqual(clutch.setSpace(true, at: 1), [.begin(.zero,1)])
+        _ = clutch.update(.zero, pose: HandPose(indexExtended: true, pointing: true, pinched: true), at: 10, final: false)
+        XCTAssertEqual(clutch.setSpace(false, at: 11), [])
+        XCTAssertEqual(clutch.update(.zero, pose: pointing, at: 20, final: true), [.finish(.zero,20)])
+        _ = clutch.setSpace(true, at: 30)
+        XCTAssertEqual(clutch.cancel(), [.cancel]); XCTAssertFalse(clutch.down)
+    }
+    @Test func testTableMappingAndDeskViewFullFrame() {
+        XCTAssertEqual(HandPose.map(Point(0.2,0.6), width: 1000, height: 800, deskView: true), Point(200,480))
+        let point = HandPose.map(Point(0.85,0.25), width: 1000, height: 800, deskView: false)
+        XCTAssertEqual(point.x,0,accuracy:0.000001); XCTAssertEqual(point.y,0)
+        XCTAssertEqual(HandPose.map(Point(0,1), width: 1000, height: 800, deskView: false),Point(1000,800))
+    }
 }
 
 private func XCTAssertEqual<T: Equatable>(_ actual: T, _ expected: T, _ message: String = "", sourceLocation: SourceLocation = #_sourceLocation) {
